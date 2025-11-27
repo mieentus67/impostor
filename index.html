@@ -87,6 +87,7 @@
     <div id="step4" class="hidden">
       <h2>Losowanie pierwszego gracza</h2>
       <div id="starter"></div>
+      <button id="newRoundBtn" class="hidden" onclick="newRound()">Nowa runda</button>
     </div>
   </div>
 
@@ -94,24 +95,48 @@
     let players = [];
     let impostors = [];
     let words = [
-"absolwent","adres","akumulator","akwarium","alarm","album","alfabet","amator","amortyzator","ananas",
-"anatomia","anioł","apteczka","arbuz","architekt","arkusz","armata","aromat","artykuł","atlas",
-"autobus","autor","awatar","bagietka","bahamy","bajka","bak","balon","balustrada","bandyta",
-"baner","banjo","bank","bańka","bar","baran","barek","barka","barwa","basen",
-"bateria","baton","bawełna","baza","bazylia","beczka","beduiń","biedronka","bieg","bilet",
-"bilon","biolog","biurko","biznes","blad","blacha","blok","bluza","bochenek","bohater",
-"boisko","bojler","bok","bokser","bolid","bombka","bongo","borówka","bory","browar",
-"bramka","bransoletka","brat","broda","broszka","brzeg","brzytwa","budzik","budynek","buk","bukiet",
-"but","butelka","byk","cebula","cegła","cel","celownik","cement","cena","centymetr",
-"ceramika","cereal","chłopak","chmura","choinka","chorągiew","chór","chusta","chwyt","cygaro",
-"cykl","cylinder","cynk","cyrk","czapa","czarny","czeka","czereśnia","czujnik","czystość",
-"daktyl","dama","danie","dar","darmówka","dąb","debata","delfin","demonstracja","dentysta",
-"deska","dinozaur","dioda","dioda","dokument","dolar","dom","donica","dorsz","dostawca",
-"drapak","drążek","drewno","drut","drzwi","duda","długopis","dzwonek","dynia","dzbanek",
-/* ... 900+ additional Polish nouns ... */
-"żakiet","żar","żarówka","żebro","żel","żelazo","żłobek","żmija","żniwa","żużel",
-"życzenie","żyrandol","żyto","żywioł","żywność" 
-]; let civilianWord = words[Math.floor(Math.random() * words.length)];
+"samochód","dom","rower","pies","kot","jabłko","drzewo","książka","szkoła","stół",
+"krzesło","telefon","okno","drzwi","komputer","kubek","buty","koszula","czapka","plecak",
+"miasto","rzeka","morze","góra","las","deszcz","śnieg","słońce","kwiat","ogród",
+"piłka","zegarek","torba","lampa","poduszka","łóżko","kanapa","kawa","herbata","samolot",
+"pociąg","tramwaj","lód","ciasto","chleb","ser","masło","mleko","cukier","jajko",
+"ryba","mięso","warzywo","owoc","okulary","długopis","zeszyt","papier","talerz","łyżka",
+"widelec","nóż","butelka","szklanka","płyta","film","muzyka","piosenka","gra","zegar",
+"mapa","aparat","słuchawki","kamera","łódka","samochodzik","balon","świeca","piórnik","kosz",
+"kran","woda","ognisko","koc","piasek","kamień","ziemia","niebo","chmura","wiatr",
+"ogień","park","ulica","droga","most","tunel","skateboard","kajak","rowerek","skarpeta",
+"rękawiczka","koszyk","notes","guma","klej","farba","pędzel","puzzle","kostka","klocki",
+"maskotka","lalka","klocki","tor","piłeczka","rakieta","butelka","słoik","paczka","torebka",
+"szalik","kurtka","czapka","rękawiczki","okulary","portfel","zegarek","klucz","drzwi","okno",
+"krzesło","stół","łóżko","sofa","szafa","komoda","regał","lampka","lampion","dywan",
+"zasłona","firanka","poduszka","kołdra","koc","materac","lustro","obraz","zdjęcie","roślina",
+"bukiet","kwiaty","trawa","krzew","drzewko","owocowiec","warzywo","jabłko","gruszka","pomarańcza",
+"banan","winogrono","truskawka","malina","jagoda","czereśnia","wiśnia","brzoskwinia","śliwka","ananas",
+"arbuz","melon","cytryna","limonka","kiwi","mango","kokos","pomidor","ogórek","marchew",
+"cebula","czosnek","ziemniak","kapusta","brokuł","kalafior","papryka","cukinia","bakłażan","sałata",
+"szpinak","rukola","fasola","groch","soczewica","ryż","makaron","chleb","bułka","bagietka",
+"ciasto","ciastko","muffin","pączek","drożdżówka","sernik","makowiec","krem","mleko","jogurt",
+"ser","masło","śmietana","jajko","mięso","kurczak","indyk","wołowina","wieprzowina","ryba",
+"tuńczyk","łosoś","krewetka","homar","krab","ośmiornica","sardynka","makrela","kawa","herbata",
+"sok","woda","napój","cola","lemoniada","piwo","wino","szampan","whisky","wódka",
+"samolot","helikopter","balon","rower","hulajnoga","rolki","deskorolka","samochód","motocykl","autobus",
+"tramwaj","pociąg","statek","łódź","kajak","kanu","taksówka","taxi","metro","kolej",
+"most","tunel","droga","ulica","chodnik","park","plac","skwer","boisko","stadion",
+"szkoła","przedszkole","uniwersytet","biblioteka","kino","teatr","muzeum","galeria","restauracja","kawiarnia",
+"bar","hotel","hostel","lotnisko","dworzec","stacja","apteka","sklep","market","supermarket",
+"poczta","bank","urzad","biblioteka","park","las","góra","rzeka","jezioro","morze",
+"plaża","piasek","fale","ryby","łódka","kajak","surfing","żaglówka","statek","port",
+"samolot","helikopter","balon","rakieta","kosmos","satelita","ziemia","księżyc","słońce","gwiazda",
+"planeta","galaktyka","asteroid","kometa","meteoryt","mgławica","teleskop","lornetka","obserwatorium","astronauta",
+"robot","dron","komputer","laptop","tablet","telefon","smartfon","drukarka","monitor","klawiatura",
+"mysz","słuchawki","kamera","aparat","projektor","ekran","głośnik","mikrofon","lampka","zegarek",
+"budzik","notatnik","długopis","ołówek","markery","farby","pędzle","papier","klej","nożyczki",
+"taśma","guma","puzzle","klocki","maskotka","lalka","piłka","rakieta","skakanka","hula-hop",
+"hulajnoga","rower","rolki","deskorolka","łyżwy","narty","snowboard","kajak","łódka","samochodzik",
+"balon","lampion","torebka","plecak","portfel","klucz","okulary","szalik","kurtka","czapka"
+];
+
+    let civilianWord = words[Math.floor(Math.random() * words.length)];
     let currentIndex = 0;
 
     function goToNames() {
@@ -188,8 +213,36 @@
       document.getElementById("step3").classList.add("hidden");
       document.getElementById("step4").classList.remove("hidden");
 
+      pickStarter();
+
+      document.getElementById("newRoundBtn").classList.remove("hidden");
+    }
+
+    function pickStarter() {
       let starter = players[Math.floor(Math.random() * players.length)].name;
       document.getElementById("starter").innerHTML = `<h2>Zaczyna: <b>${starter}</b></h2>`;
+    }
+
+    function newRound() {
+      civilianWord = words[Math.floor(Math.random() * words.length)];
+
+      let i = Number(document.getElementById("impostorCount").value);
+      let shuffled = [...players].sort(() => Math.random() - 0.5);
+      impostors = shuffled.slice(0, i).map(p => p.name);
+
+      players.forEach(p => {
+        if (impostors.includes(p.name)) p.role = "impostor";
+        else p.role = "cywil";
+      });
+
+      currentIndex = 0;
+
+      document.getElementById("step4").classList.add("hidden");
+      document.getElementById("step3").classList.remove("hidden");
+      document.getElementById("roleBox").classList.add("hidden");
+      document.getElementById("nextPlayerBtn").classList.add("hidden");
+
+      showPlayerName();
     }
   </script>
 </body>
