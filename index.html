@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Impostor Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #1e1e2f, #3a3a5c);
+      color: white;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: #2a2a40;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.4);
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    input, button, select {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+    }
+    button {
+      background: #5c5cff;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover {
+      background: #7a7aff;
+    }
+    .hidden {
+      display: none;
+    }
+    .role-box {
+      text-align: center;
+      padding: 20px;
+      background: #1f1f33;
+      border-radius: 10px;
+      margin-top: 20px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Impostor Game</h1>
+
+    <div id="step1">
+      <h2>Ustawienia gry</h2>
+      <label>Liczba graczy:</label>
+      <input type="number" id="playerCount" min="3" max="20" />
+
+      <label>Liczba impostorów:</label>
+      <input type="number" id="impostorCount" min="1" max="5" />
+
+      <button onclick="goToNames()">Dalej</button>
+    </div>
+
+    <div id="step2" class="hidden">
+      <h2>Imiona graczy</h2>
+      <div id="nameFields"></div>
+      <button onclick="assignRoles()">Losuj role</button>
+    </div>
+
+    <div id="step3" class="hidden">
+      <h2>Odkrywanie ról</h2>
+      <div id="currentPlayer"></div>
+      <button onclick="showRole()">Pokaż rolę</button>
+      <div id="roleBox" class="role-box hidden"></div>
+      <button id="nextPlayerBtn" class="hidden" onclick="nextPlayer()">Następny</button>
+    </div>
+
+    <div id="step4" class="hidden">
+      <h2>Losowanie pierwszego gracza</h2>
+      <div id="starter"></div>
+    </div>
+  </div>
+
+  <script>
+    let players = [];
+    let impostors = [];
+    let words = [
+"absolwent","adres","akumulator","akwarium","alarm","album","alfabet","amator","amortyzator","ananas",
+"anatomia","anioł","apteczka","arbuz","architekt","arkusz","armata","aromat","artykuł","atlas",
+"autobus","autor","awatar","bagietka","bahamy","bajka","bak","balon","balustrada","bandyta",
+"baner","banjo","bank","bańka","bar","baran","barek","barka","barwa","basen",
+"bateria","baton","bawełna","baza","bazylia","beczka","beduiń","biedronka","bieg","bilet",
+"bilon","biolog","biurko","biznes","blad","blacha","blok","bluza","bochenek","bohater",
+"boisko","bojler","bok","bokser","bolid","bombka","bongo","borówka","bory","browar",
+"bramka","bransoletka","brat","broda","broszka","brzeg","brzytwa","budzik","budynek","buk","bukiet",
+"but","butelka","byk","cebula","cegła","cel","celownik","cement","cena","centymetr",
+"ceramika","cereal","chłopak","chmura","choinka","chorągiew","chór","chusta","chwyt","cygaro",
+"cykl","cylinder","cynk","cyrk","czapa","czarny","czeka","czereśnia","czujnik","czystość",
+"daktyl","dama","danie","dar","darmówka","dąb","debata","delfin","demonstracja","dentysta",
+"deska","dinozaur","dioda","dioda","dokument","dolar","dom","donica","dorsz","dostawca",
+"drapak","drążek","drewno","drut","drzwi","duda","długopis","dzwonek","dynia","dzbanek",
+/* ... 900+ additional Polish nouns ... */
+"żakiet","żar","żarówka","żebro","żel","żelazo","żłobek","żmija","żniwa","żużel",
+"życzenie","żyrandol","żyto","żywioł","żywność" 
+]; let civilianWord = words[Math.floor(Math.random() * words.length)];
+    let currentIndex = 0;
+
+    function goToNames() {
+      let p = Number(document.getElementById("playerCount").value);
+      let i = Number(document.getElementById("impostorCount").value);
+
+      if (p < 3 || i < 1 || i >= p) return alert("Złe ustawienia");
+
+      let fields = "";
+      for (let x = 0; x < p; x++) {
+        fields += `<input type='text' placeholder='Gracz ${x+1}' id='name${x}'>`;
+      }
+
+      document.getElementById("nameFields").innerHTML = fields;
+
+      document.getElementById("step1").classList.add("hidden");
+      document.getElementById("step2").classList.remove("hidden");
+    }
+
+    function assignRoles() {
+      let p = Number(document.getElementById("playerCount").value);
+      let i = Number(document.getElementById("impostorCount").value);
+
+      players = [];
+      for (let x = 0; x < p; x++) {
+        let val = document.getElementById(`name${x}`).value;
+        if (!val) return alert("Wpisz wszystkie imiona");
+        players.push({ name: val, role: "cywil" });
+      }
+
+      let shuffled = [...players].sort(() => Math.random() - 0.5);
+      impostors = shuffled.slice(0, i).map(p => p.name);
+
+      players.forEach(p => {
+        if (impostors.includes(p.name)) p.role = "impostor";
+      });
+
+      document.getElementById("step2").classList.add("hidden");
+      document.getElementById("step3").classList.remove("hidden");
+
+      showPlayerName();
+    }
+
+    function showPlayerName() {
+      document.getElementById("currentPlayer").innerHTML =
+        `<h3>Teraz telefon bierze: <br><b>${players[currentIndex].name}</b></h3>`;
+    }
+
+    function showRole() {
+      let p = players[currentIndex];
+      let box = document.getElementById("roleBox");
+
+      if (p.role === "cywil") {
+        box.innerHTML = `Jesteś CYWILEM<br><br>Twoje słowo: <b>${civilianWord}</b>`;
+      } else {
+        box.innerHTML = `Jesteś IMPOSTOREM<br><br>Inni impostorzy:<br><b>${impostors.filter(n => n !== p.name).join(", ") || "Brak"}</b>`;
+      }
+
+      box.classList.remove("hidden");
+      document.getElementById("nextPlayerBtn").classList.remove("hidden");
+    }
+
+    function nextPlayer() {
+      document.getElementById("roleBox").classList.add("hidden");
+      document.getElementById("nextPlayerBtn").classList.add("hidden");
+
+      currentIndex++;
+      if (currentIndex >= players.length) return finishRoles();
+
+      showPlayerName();
+    }
+
+    function finishRoles() {
+      document.getElementById("step3").classList.add("hidden");
+      document.getElementById("step4").classList.remove("hidden");
+
+      let starter = players[Math.floor(Math.random() * players.length)].name;
+      document.getElementById("starter").innerHTML = `<h2>Zaczyna: <b>${starter}</b></h2>`;
+    }
+  </script>
+</body>
+</html>
